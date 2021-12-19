@@ -5,8 +5,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 from django.core.mail import send_mail
-from .forms import LoginForm
-from .models import Bill,BillItem, Product
+from .forms import LoginForm, StockForm
+from .models import Bill,BillItem, Product, Stock
 import json
 
 # admin  => admin, Test123
@@ -37,9 +37,14 @@ def login(request):
     form = LoginForm()
     return render(request,'smartapp/login.html',{'form':form})
 
+def logout(request):
+    auth.logout(request)
+    return redirect('/')
+
+
 @login_required
 def staff_home(request):
-    return render(request,'smartapp/staffhome.html')
+    return render(request,'smartapp/staffhome.html',{'user':request.user})
 
 @login_required
 def staff_billing(request):
@@ -89,6 +94,33 @@ def staff_bill_add(request):
         return HttpResponse("")
     # return render(request,'smartapp/staffbilladd.html')
 
+
+@login_required
+@permission_required('smartapp.view_stock')
+def staff_stocks(request):
+    stocks = Stock.objects.all()
+    print(dir(stocks[0]))
+    context = {'stocks':stocks,'user':request.user}
+    return render(request,'smartapp/staffstock.html',context)
+
+@login_required
+@permission_required('smartapp.view_stock',raise_exception=True)
+# @permission_required('smartapp.change_stock',raise_exception=True)
+def staff_edit_stocks(request,id):
+    stock = Stock.objects.get(pk=id)
+    form = StockForm(instance=stock)
+    context = {'stock':stock,'user':request.user, "form":form}
+    if request.method=="POST":
+        form = StockForm(request.POST,instance=stock)
+        if form.is_valid():
+            form.save()
+            context = {'stock':stock,'user':request.user, "form":form, "msg":"Stock Updated Successfully"}
+            return render(request,'smartapp/staffstockedit.html',context)
+        else:
+            context = {'stock':stock,'user':request.user, "form":form, "err":"Enter valid data"}
+            return render(request,'smartapp/staffstockedit.html',context)
+    return render(request,'smartapp/staffstockedit.html',context)
+   
 
 def product_details(request,id):
     if request.method == "GET":

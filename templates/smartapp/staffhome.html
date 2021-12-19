@@ -8,6 +8,7 @@
     {% load static %}
     <title>Staff Home Smart</title>
     <link href="{% static 'css/bootstrap/bootstrap.css'%}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap-icons.css' %}" rel="stylesheet">
     <style>
         @font-face {
             font-family: 'Roboto';
@@ -20,7 +21,7 @@
             font-style: italic;
         }
         *{
-            font-family: "Roboto";
+            font-family: "Roboto" !important;
         }
     </style>
     <link href="{% static 'css/style.css'%}" rel="stylesheet">
@@ -28,10 +29,43 @@
 </head>
 
 <body>
-    <div class="container-fluid bg-light h-100">
-        <h3 class="h3">Welcome Staff</h3>
-        <a href="{% url 'login' %}">Login</a>
-        <a href="{% url 'staff_billing' %}">Go to billing</a>
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top bg-white shadow-sm text-white">
+        <div class="container-fluid px-5">
+            <a class="navbar-brand h3 fw-bold" href="{% url 'staff_home' %}">SMART</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link h4 active mx-3" aria-current="page" href="{% url 'staff_billing' %}"><i class="bi bi-file-earmark-text-fill text-secondary ml-5 mr-2"></i> Bills</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link h4 active mx-3" href="{% url 'staff_stocks' %}"><i class="bi bi-stack text-secondary ml-5 mr-2"></i> Stocks</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link h4 mx-3" href="#"><i class="bi bi-basket2-fill text-secondary ml-5 mr-2"></i> Products</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle h4 text-capitalize mx-3" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle text-secondary ml-5 mr-2"></i> {{ user }}
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                          <!-- <li><a class="dropdown-item" href="#">Action</a></li>
+                          <li><hr class="dropdown-divider"></li> -->
+                          <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="bi bi-arrow-right-square text-secondary mx-3"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid d-flex flex-column justify-content-center align-items-center bg-light h-100">
+        <h3 class="h3 text-capitalize my-5">Welcome, {{ user }}</h3>
+        <p>Go to Billing for bill entry and bill history.</p>
+        <p>Go to Stocks for stock details.</p>
     </div>
 </body>
 
