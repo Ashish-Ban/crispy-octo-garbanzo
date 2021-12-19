@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <title>Staff Home Smart</title>
+    <link href="{% static 'css/bootstrap/bootstrap.css'%}" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'Roboto';
+            src: url('Roboto-ThinItalic-webfont.eot');
+            src: url('Roboto-ThinItalic-webfont.eot?#iefix') format('embedded-opentype'),
+                url('Roboto-ThinItalic-webfont.woff') format('woff'),
+                url('Roboto-ThinItalic-webfont.ttf') format('truetype'),
+                url('Roboto-ThinItalic-webfont.svg#RobotoThinItalic') format('svg');
+            font-weight: 200;
+            font-style: italic;
+        }
+
+        * {
+            font-family: "Roboto";
+        }
+    </style>
+    <link href="{% static 'css/style.css'%}" rel="stylesheet">
+    <script src="{% static 'js/bootstrap/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/axios.min.js' %}"></script>
+</head>
+
+<body onload="handleOnLoad()">
+    <div class="container bg-white h-100">
+        <div class="d-flex flex-column m-5 p-5 rounded bg-white shadow">
+            <div class="d-flex flex-row justify-content-between my-3 fw-bold">
+                <h4 class="h4 fw-bold">Bill {{ user }}</h4>
+                <a href="{% url 'staff_billing' %}">Go Back</a>
+            </div>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div class="d-flex flex-row mt-5">
+                    <div class="flex-grow-1">
+                        <p class="text-capitalize fw-bold">Product Code</p>
+                    </div>
+                    <div class="flex-grow-1">
+                        <p class="text-capitalize fw-bold">Product Name</p>
+                    </div>
+                    <div class="flex-grow-1">
+                        <p class="text-capitalize fw-bold">Quantity</p>
+                    </div>
+                    <div class="flex-grow-1">
+                        <p class="text-capitalize fw-bold">Price</p>
+                    </div>
+                    <div class="flex-grow-1">
+                        <p class="text-capitalize fw-bold">Total</p>
+                    </div>
+                </div>
+                <div class="d-flex flex-row mb-2">
+                    <select class="form-select" id="product" onchange="handleProduct()" aria-label="Select Product">
+                        <option value="" selected>Select Product</option>
+                        {% for product in products %}
+                        <option value="{{ product.id }}">{{ product.code}}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="text" class="form-control bg-white border-0" id="productName" disabled>
+                    <input type="number" class="form-control" id="quantity" onchange="handleProduct()">
+                    <input type="number" class="form-control bg-white border-0" id="price" disabled>
+                    <input type="number" class="form-control bg-white border-0" id="total" disabled>
+                </div>
+                <div class="d-flex flex-row justify-content-end mb-5">
+                    <button type="button" class="btn btn-primary" id="#addButton" onclick="addProduct()">Add New
+                        Product</button>
+                </div>
+
+                <div class="d-flex flex-row justify-content-start mt-5 fw-bold">
+                    <h4 class="h4 fw-bold">Added Items</h4>
+                </div>
+                <table class="table" id="billtable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th scope="col">Product ID</th>
+                            <th scope="col">Product Code</th>
+                            <th scope="col">Product Name</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if products %}
+                        <!-- <tr id="productentry">
+                            <td class="text-capitalize fw-bold">
+                                <select class="form-select" id="product" onchange="handleProduct()"
+                                    aria-label="Select Product">
+                                    <option selected>Select Product</option>
+                                    {% for product in products %}
+                                    <option value="{{ product.id }}">{{ product.code}}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control bg-white border-0" id="productName" disabled>
+                            </td>
+                            <td>
+                                <input type="number" class="form-control" id="quantity" onchange="handleProduct()">
+                            </td>
+                            <td>
+                                <input type="number" class="form-control bg-white border-0" id="price" disabled>
+                            </td>
+                            <td>
+                                <input type="number" class="form-control bg-white border-0" id="total" disabled>
+                            </td>
+                        </tr>
+
+                        <tr id="addButtonRow">
+                            <th scope="row"></th>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <button type="button" class="btn btn-primary" onclick="addProduct()">Add New
+                                    Product</button>
+                            </td>
+                        </tr> -->
+                        {% endif %}
+                    </tbody>
+                </table>
+
+                <div class="d-flex flex-row justify-content-end mb-5 pr-5">
+                    <!-- <button type="button" class="btn btn-primary" id="#addButton" onclick="getGrandTotal()">Grand Total</button> -->
+                    <p class="fw-bold">Grand Total: ₹ </p>
+                    <p class="fw-bold" id="showGrandTotal"></p>
+                </div>
+
+                <div class="d-flex flex-row justify-content-end mb-5 pr-5">
+                    <button type="button" class="btn btn-primary" id="#saveBill" onclick="saveBill()">Save</button>
+                </div>
+
+                <!-- <div class="d-flex flex-row">
+                    <select class="form-select" id="product" onchange="handleProduct()" aria-label="Select Product">
+                        <option selected>Select Product</option>
+                        {% for product in products %}
+                        <option value="{{ product.id }}">{{ product.code}}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="text" class="form-control bg-white border-0" id="productName" disabled>
+                    <input type="number" class="form-control" id="quantity" onchange="handleProduct()">
+                    <input type="number" class="form-control bg-white border-0" id="price" disabled>
+                    <input type="number" class="form-control bg-white border-0" id="total" disabled>
+                </div> -->
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function handleProduct() {
+            const value = document.getElementById('product')
+            axios.get(`/products/${value.value}/?dashboard=1`).then((response) => {
+                var productNameElement = document.getElementById("productName");
+                var priceElement = document.getElementById('price');
+                var quantityElement = document.getElementById('quantity');
+                var totalElement = document.getElementById('total');
+                console.log("response is ", response.data)
+                const { name, price, code, stock } = response.data;
+
+                if (parseInt(stock) <= 0) {
+                    alert("Product Out of Stock");
+                    return;
+                } else {
+                    productNameElement.value = name
+                    priceElement.value = price;
+                    totalElement.value = String(parseFloat(price) * parseFloat(quantityElement.value));
+
+                    productNameElement.setAttribute('value', name);
+                    priceElement.setAttribute('value', price);
+                    totalElement.setAttribute('value', String(parseFloat(price) * parseFloat(quantityElement.value)));
+                }
+            }).catch(error => {
+                console.log("error occured in getting product details ", error.message)
+            })
+            return
+        }
+
+        function addProduct() {
+            let table = document.getElementById("billtable");
+            // table form row
+            let productElement = document.getElementById('product');
+            let productNameElement = document.getElementById("productName");
+            let priceElement = document.getElementById('price');
+            let quantityElement = document.getElementById('quantity');
+            let totalElement = document.getElementById('total');
+            console.log("addProduct Called ", productElement.value)
+            //
+            //var productEntryRow = document.getElementById('productentry');
+            //var addButtonRow = document.getElementById('addButtonRow');
+            if (!productElement.value || productElement.value === "") {
+                alert("Select a product");
+                return
+            }
+            if (!quantityElement.value || parseFloat(quantityElement.value) <= 0 || quantityElement.value === "") {
+                alert("Enter a quantity");
+                return
+            }
+            let row = table.tBodies[0].insertRow(-1);
+            let cell1 = row.insertCell(0);
+            let cell2 = row.insertCell(1);
+            let cell3 = row.insertCell(2);
+            let cell4 = row.insertCell(3);
+            let cell5 = row.insertCell(4);
+            let cell6 = row.insertCell(5);
+            let cell7 = row.insertCell(6);
+
+            cell1.innerHTML = productElement.value
+            cell2.innerHTML = productElement.options[productElement.selectedIndex].text
+            cell3.innerHTML = productNameElement.value
+            cell4.innerHTML = priceElement.value
+            cell5.innerHTML = quantityElement.value
+            cell6.innerHTML = totalElement.value
+            cell6.setAttribute('name', "totalCell")
+
+            var removeButton = document.createElement('input');
+            removeButton.setAttribute('type', 'button');
+            removeButton.setAttribute('value', ' - ');
+            removeButton.setAttribute('class', 'btn btn-primary');
+            removeButton.setAttribute('onclick', 'removeRow(this)');
+            cell7.appendChild(removeButton);
+
+            productElement.value = ""
+            productNameElement.value = ""
+            priceElement.value = "0"
+            quantityElement.value = "1"
+            totalElement.value = "0"
+            productElement.setAttribute('value', "")
+            productNameElement.setAttribute('value', "")
+            priceElement.setAttribute('value', "0")
+            quantityElement.setAttribute('value', "1")
+            totalElement.setAttribute('value', "0")
+
+            productElement.onchange = handleProduct;
+            quantityElement.onchange = handleProduct;
+            table.setAttribute('style', 'display:"table"')
+            getGrandTotal();
+        }
+
+        function getGrandTotal() {
+            let cells = document.getElementsByName('totalCell');
+            let grandTotal = 0;
+            console.log(cells)
+            for (let i in cells) {
+                let price = cells[i].innerHTML ? parseFloat(cells[i].innerHTML) : 0
+                grandTotal += price
+            }
+            console.log("teh grandTotal is ", grandTotal)
+            document.getElementById("showGrandTotal").innerHTML = String(grandTotal)
+        }
+
+        function removeRow(oButton) {
+            var table = document.getElementById('billtable');
+            table.deleteRow(oButton.parentNode.parentNode.rowIndex); // button -> td -> tr.
+            getGrandTotal()
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function saveBill() {
+            console.log('billing')
+            let table = document.getElementById("billtable");
+            let rowarr = Array.from(table.tBodies[0].rows)
+            let data = rowarr.map(item => {
+                return {
+                    product: item.children[0].innerHTML,
+                    quantity: item.children[4].innerHTML
+                }
+            })
+            console.log("The data to sent is ", data);
+            axios.post(`/staff/bills/create/`, {
+                "products": data
+            }
+                , {
+                    headers: {
+                        "X-CSRFToken": getCookie("csrftoken"),
+                        "Content-Type": "application/json"
+                        // "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    mode: "same-origin"
+
+                }).then((response) => {
+                    alert("Bill Added Successfully");
+                    window.location.reload()
+                }).catch(error => {
+                    alert("Failed to create bill")
+                })
+        }
+    </script>
+</body>
+
+</html>

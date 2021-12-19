@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <title>Smart</title>
+    <link href="{% static 'css/bootstrap/bootstrap.css'%}" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'Roboto';
+            src: url('Roboto-ThinItalic-webfont.eot');
+            src: url('Roboto-ThinItalic-webfont.eot?#iefix') format('embedded-opentype'),
+                url('Roboto-ThinItalic-webfont.woff') format('woff'),
+                url('Roboto-ThinItalic-webfont.ttf') format('truetype'),
+                url('Roboto-ThinItalic-webfont.svg#RobotoThinItalic') format('svg');
+            font-weight: 200;
+            font-style: italic;
+        }
+        *{
+            font-family: "Roboto";
+        }
+    </style>
+    <link href="{% static 'css/style.css'%}" rel="stylesheet">
+    <script src="{% static 'js/bootstrap/bootstrap.bundle.min.js' %}"></script>
+</head>
+
+<body>
+    <div class="container-fluid bg-light h-100">
+        <h3 class="h3 fw-bold">Smart app</h3>
+        <a href="{% url 'login' %}">Login</a>
+    </div>
+</body>
+
+</html>

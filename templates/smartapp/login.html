@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <title>Login Smart</title>
+    <link href="{% static 'css/bootstrap/bootstrap.css'%}" rel="stylesheet">
+    <link href="{% static 'css/style.css'%}" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'Roboto';
+            src: url('Roboto-ThinItalic-webfont.eot');
+            src: url('Roboto-ThinItalic-webfont.eot?#iefix') format('embedded-opentype'),
+                url('Roboto-ThinItalic-webfont.woff') format('woff'),
+                url('Roboto-ThinItalic-webfont.ttf') format('truetype'),
+                url('Roboto-ThinItalic-webfont.svg#RobotoThinItalic') format('svg');
+            font-weight: 200;
+            font-style: italic;
+        }
+
+        * {
+            font-family: "Roboto";
+        }
+    </style>
+    <script src="{% static 'js/bootstrap/bootstrap.bundle.min.js' %}"></script>
+</head>
+
+<body>
+    <div class="container-fluid bg-white h-100 justify-content-center align-items-center d-flex">
+        <div class="d-flex flex-column shadow bg-white rounded p-5">
+            <h3 class="fs-3 text-center">Login</h3>
+            <form action="{% url 'login' %}" class="d-flex flex-column" method="POST">
+                {% csrf_token %}
+                {{ form }}
+                <input type="submit" class="btn btn-primary" value="Login">
+                {% if msg %}
+                <p class="text-danger fw-bold text-capitalize my-3">{{ msg }}</p>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
