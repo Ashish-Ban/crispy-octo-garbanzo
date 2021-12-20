@@ -23,4 +23,14 @@ class StockForm(forms.ModelForm):
     class Meta:
         model = Stock
         fields = "__all__"
+
+class ProductForm(forms.ModelForm):
+    def __init__(self, *args,**kwargs):
+        super(ProductForm,self).__init__(*args,**kwargs)
     
+    def clean(self):
+        return super().clean()
+    
+    class Meta:
+        model = Product
+        fields = "__all__"

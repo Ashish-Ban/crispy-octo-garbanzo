@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <title>Smart | Admin</title>
+    <link href="{% static 'css/bootstrap/bootstrap.css'%}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap-icons.css' %}" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'Roboto';
+            src: url('Roboto-ThinItalic-webfont.eot');
+            src: url('Roboto-ThinItalic-webfont.eot?#iefix') format('embedded-opentype'),
+                url('Roboto-ThinItalic-webfont.woff') format('woff'),
+                url('Roboto-ThinItalic-webfont.ttf') format('truetype'),
+                url('Roboto-ThinItalic-webfont.svg#RobotoThinItalic') format('svg');
+            font-weight: 200;
+            font-style: italic;
+        }
+
+        * {
+            font-family: "Roboto" !important;
+        }
+    </style>
+    <link href="{% static 'css/style.css'%}" rel="stylesheet">
+    <script src="{% static 'js/bootstrap/bootstrap.bundle.min.js' %}"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top bg-white shadow-sm text-white">
+        <div class="container-fluid px-5">
+            <a class="navbar-brand h3 fw-bold" href="{% url 'dashboard' %}">SMART</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link h4 mx-3" aria-current="page" href="{% url 'dashboard_list_users' %}"><i
+                                class="bi bi-people-fill text-secondary ml-5 mr-2"></i> Users</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link h4 mx-3" aria-current="page" href="{% url 'dashboard' %}"><i
+                                class="bi bi-receipt text-secondary ml-5 mr-2"></i> Audits</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link h4 active mx-3" aria-current="page" href="{% url 'dashboard' %}"><i
+                                class="bi bi-file-earmark-text-fill text-secondary ml-5 mr-2"></i> Bills</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link h4 active mx-3" href="{% url 'dashboard' %}"><i
+                                class="bi bi-stack text-secondary ml-5 mr-2"></i> Stocks</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link h4 mx-3" href="{% url 'dashboard' %}"><i
+                                class="bi bi-basket2-fill text-secondary ml-5 mr-2"></i> Products</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle h4 text-capitalize mx-3" href="#" id="navbarDropdown"
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle text-secondary ml-5 mr-2"></i> {{ user }}
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <!-- <li><a class="dropdown-item" href="#">Action</a></li>
+                          <li><hr class="dropdown-divider"></li> -->
+                            <li><a class="dropdown-item" href="{% url 'logout' %}"><i
+                                        class="bi bi-arrow-right-square text-secondary mx-3"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container h-100">
+        <div class="d-flex flex-column shadow-sm bg-white m-5 p-5">
+            <div class="d-flex flex-row justify-content-between my-3 fw-bold">
+                <h4 class="h4 fw-bold">Add Staff User</h4>
+                <!-- <a href="{% url 'dashboard' %}">Go Back</a> -->
+            </div>
+            <form action="" method="POST">
+                {% csrf_token %}
+                {% if form %}
+                <div class="mb-3">
+                    <label for="id_username" class="form-label">Username:</label>
+                    <input type="text" name="username" class="form-control" maxlength="150" autocapitalize="none"
+                        autocomplete="username" autofocus="" required="" id="id_username" value="{{ user.username }}">
+                    <span id="usernameHelpBlock" class="form-text text-muted">Required. 150 characters or fewer.
+                        Letters, digits and @/./+/-/_ only.</span>
+                    {% if form.username.errors %}
+                    {{ form.username.errors }}
+                    {% endif %}
+                </div>
+                <!-- <div class="mb-3">
+                    <label for="id_password1" class="form-label">Password:</label>
+                    <input type="password" name="password1" class="form-control" autocomplete="new-password" required=""
+                        id="id_password1">
+                    <span id="passwordHelpBlock" class="form-text text-muted">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item form-text text-muted">Your password can’t be too similar to your
+                                other personal information.</li>
+                            <li class="list-group-item form-text text-muted">Your password must contain at least 8
+                                characters.</li>
+                            <li class="list-group-item form-text text-muted">Your password can’t be a commonly used
+                                password.</li>
+                            <li class="list-group-item form-text text-muted">Your password can’t be entirely numeric.
+                            </li>
+                        </ul>
+                    </span>
+                    {% if form.password1.errors %}
+                    {{ form.password1.errors }}
+                    {% endif %}
+                </div>
+                <div class="mb-3">
+                    <label for="id_password2" class="form-label">Password confirmation:</label>
+                    <input type="password" name="password2" class="form-control" autocomplete="new-password" required=""
+                        id="id_password2">
+                    <span id="confirmpasswordHelpBlock" class="form-text text-muted">Enter the same password as before,
+                        for verification.</span>
+                    {% if form.password2.errors %}
+                    {{ form.password2.errors }}
+                    {% endif %}
+                </div> -->
+                <div class="mb-3">
+                    <label for="id_password" class="form-label">Password:</label>
+                    {{ form.password }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_firstname" class="form-label">First Name :</label>
+                    <input type="text" name="firstname" class="form-control" required=""
+                        id="id_firstname" value="{{ user.first_name}}">
+                    <span id="firstnameHelpBlock" class="form-text text-muted">Enter First Name of the user.</span>
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_lastname" class="form-label">Last Name :</label>
+                    <input type="text" name="lastname" class="form-control" required=""  id="id_lastname" value="{{ user.last_name }}">
+                    <span id="lastnameHelpBlock" class="form-text text-muted">Enter Last Name of the user.</span>
+                </div>
+
+                <div class="mb-3">
+                    <!-- {% if iscashier  %}
+                    <h3 class="h3">Is Cashier</h3>
+                    {% endif %} -->
+                    <span class="fw-bold">Staff Type (Permissions),  </span>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="stafftype" id="stafftype1" value="cashier" checked="{{iscashier}}">
+                        <label class="form-check-label" for="stafftype1">  Cashier </label>
+                        <span id="cashierHelpBlock" class="form-text text-muted">If Selected the created user will have permission to add bills and view products.</span>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="stafftype" id="stafftype2" value="stock" checked="{{isstock}}">
+                        <label class="form-check-label" for="stafftype2">  Stock Keeper  </label>
+                        <span id="stockkeeperHelpBlock" class="form-text text-muted">If selected the created user will have permission to editing Stocks and view products.</span>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="stafftype" id="stafftype3" value="admin"  {% if user.is_superuser %} checked {% endif %} >
+                        <label class="form-check-label" for="stafftype3"> Admin  </label>
+                        <span id="stockkeeperHelpBlock" class="form-text text-muted">If selected the created user will have permission to editing Stocks and view products.</span>
+                    </div>
+                    <span id="stafftypeHelpBlock" class="form-text text-muted">The created user requires any of the above staff type (permissions), without which he/she cannot access billng, stocks or products. Select Admin to change user to admin</span>
+                </div>
+
+                {{ form.errors }}
+
+                <div class="mb-3">
+                    <label for="id_date_joined" class="form-label">Date Joined :</label>
+                    {{ form.date_joined }}
+                </div>
+
+                {% if msg %}
+                <div class="alert alert-success" role="alert">
+                    <i class="bi bi-check-circle text-success"></i> {{ msg }}
+                </div>
+                {% endif %}
+                {% if err %}
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-circle text-danger"></i>{{ err }}
+                </div>
+                {% endif %}
+                <div class="d-flex justify-content-around">
+                    <a class="btn btn-primary text-decoration-none text-white"
+                        href="{% url 'dashboard_list_users' %}">Go Back</a>
+                    <input type="submit" class="btn btn-primary" value="Add Staff">
+                </div>
+                <!-- {{ form }} -->
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <title>Smart | Admin</title>
+    <link href="{% static 'css/bootstrap/bootstrap.css'%}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap-icons.css' %}" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'Roboto';
+            src: url('Roboto-ThinItalic-webfont.eot');
+            src: url('Roboto-ThinItalic-webfont.eot?#iefix') format('embedded-opentype'),
+                url('Roboto-ThinItalic-webfont.woff') format('woff'),
+                url('Roboto-ThinItalic-webfont.ttf') format('truetype'),
+                url('Roboto-ThinItalic-webfont.svg#RobotoThinItalic') format('svg');
+            font-weight: 200;
+            font-style: italic;
+        }
+
+        * {
+            font-family: "Roboto" !important;
+        }
+    </style>
+    <link href="{% static 'css/style.css'%}" rel="stylesheet">
+    <script src="{% static 'js/bootstrap/bootstrap.bundle.min.js' %}"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top bg-white shadow-sm text-white">
+        <div class="container-fluid px-5">
+            <a class="navbar-brand h3 fw-bold" href="{% url 'dashboard' %}">SMART</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link h4 mx-3" aria-current="page" href="{% url 'dashboard_list_users' %}"><i
+                                class="bi bi-people-fill text-secondary ml-5 mr-2"></i> Users</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link h4 mx-3" aria-current="page" href="{% url 'dashboard' %}"><i
+                                class="bi bi-receipt text-secondary ml-5 mr-2"></i> Audits</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link h4 active mx-3" aria-current="page" href="{% url 'dashboard' %}"><i
+                                class="bi bi-file-earmark-text-fill text-secondary ml-5 mr-2"></i> Bills</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link h4 active mx-3" href="{% url 'dashboard' %}"><i
+                                class="bi bi-stack text-secondary ml-5 mr-2"></i> Stocks</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link h4 mx-3" href="{% url 'dashboard' %}"><i
+                                class="bi bi-basket2-fill text-secondary ml-5 mr-2"></i> Products</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle h4 text-capitalize mx-3" href="#" id="navbarDropdown"
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle text-secondary ml-5 mr-2"></i> {{ user }}
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <!-- <li><a class="dropdown-item" href="#">Action</a></li>
+                          <li><hr class="dropdown-divider"></li> -->
+                            <li><a class="dropdown-item" href="{% url 'logout' %}"><i
+                                        class="bi bi-arrow-right-square text-secondary mx-3"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container h-100">
+        <div class="d-flex flex-column shadow-sm bg-white m-5 p-5">
+
+            <!-- Admin Users -->
+            <div class="d-flex flex-row justify-content-between my-3 fw-bold">
+                <h4 class="h4 fw-bold">Admin Users</h4>
+                <a class="text-decoration-none btn btn-primary" href="{% url 'dashboard_add_admin_users' %}">Add Admin</a>
+            </div>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">First Name</th>
+                        <th scope="col">Last Name</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if admins %}
+                    {% for u in admins %}
+                    <tr>
+                        <td>
+                            {{ u.id }}
+                        </td>
+                        <th scope="row">
+                            {{ u.username }}
+                        </th>
+                        <td>
+                            {{ u.first_name }}
+                        </td>
+                        <td>
+                            {{ u.last_name }}
+                        </td>
+                        <td>
+                            
+                        </td>
+                        <td>
+                            <a class="text-decoration-none text-dark" href="{% url 'dashboard_list_users' %}{{ u.id }}/">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
+
+            <!-- Staff Users -->
+            <div class="d-flex flex-row justify-content-between my-3 fw-bold">
+                <h4 class="h4 fw-bold">Staff Users</h4>
+                <a class="text-decoration-none btn btn-primary" href="{% url 'dashboard_add_staff_users' %}">Add Staff</a>
+            </div>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">First Name</th>
+                        <th scope="col">Last Name</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if staffs %}
+                    {% for u in staffs %}
+                    <tr>
+                        <td>
+                            {{ u.id }}
+                        </td>
+                        <th scope="row">
+                            {{ u.username }}
+                        </th>
+                        <td>
+                            {{ u.first_name }}
+                        </td>
+                        <td>
+                            {{ u.last_name }}
+                        </td>
+                        <td>
+                            
+                        </td>
+                        <td>
+                            <a class="text-decoration-none text-dark" href="{% url 'dashboard_list_users' %}{{ u.id }}/">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
+
+
+            <!-- Other Users in Database  -->
+            {% if others %}
+            <div class="d-flex flex-row justify-content-between my-3 fw-bold">
+                <h4 class="h4 fw-bold">Other Users</h4>
+                <!-- <a class="text-decoration-none btn btn-primary" href="{% url 'dashboard_add_staff_users' %}">Add Staff</a> -->
+            </div>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">First Name</th>
+                        <th scope="col">Last Name</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in others %}
+                    <tr>
+                        <td>
+                            {{ u.id }}
+                        </td>
+                        <th scope="row">
+                            {{ u.username }}
+                        </th>
+                        <td>
+                            {{ u.first_name }}
+                        </td>
+                        <td>
+                            {{ u.last_name }}
+                        </td>
+                        <td>
+                            
+                        </td>
+                        <td>
+                            <a class="text-decoration-none text-dark" href="{% url 'dashboard_list_users' %}{{ u.id }}/">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+            
+
+        </div>
+    </div>
+</body>
+
+</html>
