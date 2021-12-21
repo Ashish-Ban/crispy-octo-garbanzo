@@ -54,12 +54,16 @@ def staff_home(request):
 
 
 @login_required
+@permission_required('smartapp.view_bill')
+@permission_required('smartapp.view_billitem')
 def staff_billing(request):
     bills = Bill.objects.all().order_by("-id")
     return render(request,'smartapp/staffbill.html',{'bills':bills})
 
 
 @login_required
+@permission_required('smartapp.view_bill')
+@permission_required('smartapp.view_billitem')
 def staff_bill_details(request,billno):
     if request.method=="GET":
         bill = Bill.objects.get(billno=billno)
@@ -72,9 +76,11 @@ def staff_bill_details(request,billno):
 
 @login_required
 @permission_required('smartapp.add_bill')
-@permission_required('smartapp.change_bill')
+# @permission_required('smartapp.change_bill')
+@permission_required('smartapp.view_bill')
+@permission_required('smartapp.view_billitem')
 @permission_required('smartapp.add_billitem')
-@permission_required('smartapp.change_billitem')
+# @permission_required('smartapp.change_billitem')
 def staff_bill_add(request):
     if request.method == "GET":
         products = Product.objects.all()
@@ -102,6 +108,7 @@ def staff_bill_add(request):
 
 @login_required
 @permission_required('smartapp.view_stock',raise_exception=True)
+@permission_required('smartapp.change_stock',raise_exception=True)
 def staff_stocks(request):
     stocks = Stock.objects.all().order_by("-id")
     context = {'stocks':stocks,'user':request.user}
@@ -127,12 +134,15 @@ def staff_edit_stocks(request,id):
     return render(request,'smartapp/staffstockedit.html',context)
    
 @login_required
+@permission_required('smartapp.view_product',raise_exception=True)
 def staff_products(request):
     products = Product.objects.all().order_by("-id")
     context = {'products':products,'user':request.user}
     return render(request,'smartapp/staffproducts.html',context)
 
 @login_required
+@permission_required('smartapp.view_product',raise_exception=True)
+@permission_required('smartapp.add_product',raise_exception=True)
 def staff_products_add(request):
     if request.method == "POST":
         form = ProductForm(request.POST)
@@ -150,6 +160,8 @@ def staff_products_add(request):
         return render(request,'smartapp/staffproductsadd.html',context)
 
 @login_required
+@permission_required('smartapp.view_product',raise_exception=True)
+@permission_required('smartapp.change_product',raise_exception=True)
 def staff_products_edit(request,id):
     if request.method == "POST":
         product = Product.objects.get(pk=id)
@@ -362,7 +374,6 @@ def admin_edit_users(request,id):
 
 
 @login_required
-@permission_required('smartapp.view_stock')
 def admin_stocks(request):
     stocks = Stock.objects.all().order_by("-id")
     context = {'stocks':stocks,'user':request.user}
@@ -370,8 +381,6 @@ def admin_stocks(request):
 
 
 @login_required
-@permission_required('smartapp.view_stock',raise_exception=True)
-@permission_required('smartapp.change_stock',raise_exception=True)
 def admin_edit_stocks(request,id):
     stock = Stock.objects.get(pk=id)
     form = StockForm(instance=stock)
@@ -472,10 +481,6 @@ def admin_bill_details(request,billno):
 
 
 @login_required
-@permission_required('smartapp.add_bill')
-@permission_required('smartapp.change_bill')
-@permission_required('smartapp.add_billitem')
-@permission_required('smartapp.change_billitem')
 def admin_bill_add(request):
     if request.method == "GET":
         products = Product.objects.all()
