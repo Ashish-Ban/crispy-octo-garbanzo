@@ -113,7 +113,7 @@ def staff_stocks(request):
 
 @login_required
 @permission_required('smartapp.view_stock',raise_exception=True)
-# @permission_required('smartapp.change_stock',raise_exception=True)
+@permission_required('smartapp.change_stock',raise_exception=True)
 def staff_edit_stocks(request,id):
     stock = Stock.objects.get(pk=id)
     form = StockForm(instance=stock)
@@ -181,6 +181,7 @@ def product_details(request,id):
             return JsonResponse({'name':product.name,'price':product.price,'code':product.code, 'stock':product.stock.available_quantity})
     return render(request, 'smartapp/productdetails.html')
 
+
 ###############################################################
 ######################   Admin    #############################
 ###############################################################
@@ -194,8 +195,8 @@ def admin_dash(request):
 @login_required
 def admin_list_users(request):
     # print(dir(User.objects.all()[0]))
-    staffs = User.objects.filter(is_staff=True, is_superuser=False)
-    admins = User.objects.filter(is_superuser=True)
+    staffs = User.objects.filter(is_staff=True, is_superuser=False).order_by("-id")
+    admins = User.objects.filter(is_superuser=True).order_by("-id")
     # others = User.objects.filter(is_superuser=False,is_staff=False)
     context = {
         'staffs':staffs,
@@ -358,3 +359,81 @@ def admin_edit_users(request,id):
             context = {'form':form,'err':'Enter Valid Details','user':user,'iscashier':iscashier,'isstock':isstock}
             return render(request,'smartapp/admineditusers.html',context)
     return render(request,'smartapp/admineditusers.html',context)
+
+
+@login_required
+@permission_required('smartapp.view_stock')
+def admin_stocks(request):
+    stocks = Stock.objects.all().order_by("-id")
+    context = {'stocks':stocks,'user':request.user}
+    return render(request,'smartapp/adminstock.html',context)
+
+
+@login_required
+@permission_required('smartapp.view_stock',raise_exception=True)
+@permission_required('smartapp.change_stock',raise_exception=True)
+def admin_edit_stocks(request,id):
+    stock = Stock.objects.get(pk=id)
+    form = StockForm(instance=stock)
+    context = {'stock':stock,'user':request.user, "form":form}
+    if request.method=="POST":
+        form = StockForm(request.POST,instance=stock)
+        if form.is_valid():
+            form.save()
+            context = {'stock':stock,'user':request.user, "form":form, "msg":"Stock Updated Successfully"}
+            return render(request,'smartapp/adminstockedit.html',context)
+        else:
+            context = {'stock':stock,'user':request.user, "form":form, "err":"Enter valid data"}
+            return render(request,'smartapp/adminstockedit.html',context)
+    return render(request,'smartapp/adminstockedit.html',context)
+
+@login_required
+def admin_products(request):
+    if request.method == "DELETE":
+        print("Delete request Received")
+        print(request.GET)
+        pid = request.GET.get('product',default=None)
+        if pid is not None:
+            product = Product.objects.get(pk=pid)
+            product.delete()
+        return HttpResponse("")
+    products = Product.objects.all().order_by("-id")
+    context = {'products':products,'user':request.user}
+    return render(request,'smartapp/adminproducts.html',context)
+
+@login_required
+def admin_products_add(request):
+    if request.method == "POST":
+        form = ProductForm(request.POST)
+        if form.is_valid():
+            form.save()
+            form = ProductForm()
+            context = {'user':request.user,'form':form, "msg":"Product Added Successfully"}
+            return render(request,'smartapp/adminproductsadd.html',context)
+        else:
+            context = {'user':request.user,'form':form, "err":"Enter valid details"}
+            return render(request,'smartapp/adminproductsadd.html',context)
+    else:
+        form = ProductForm()
+        context = {'user':request.user,'form':form}
+        return render(request,'smartapp/adminproductsadd.html',context)
+
+@login_required
+def admin_products_edit(request,id):
+    if request.method == "POST":
+        product = Product.objects.get(pk=id)
+        form = ProductForm(request.POST,instance=product)
+        if form.is_valid():
+            form.save()
+            product = Product.objects.get(pk=id)
+            form = ProductForm(instance=product)
+            context = {'user':request.user,'form':form, 'product':product, "msg":"Product Changed Successfully"}
+            return render(request,'smartapp/adminproductsedit.html',context)
+        else:
+            context = {'user':request.user,'form':form, 'product':product, "err":"Enter valid details"}
+            return render(request,'smartapp/adminproductsedit.html',context)
+    else:
+        product = Product.objects.get(pk=id)
+        form = ProductForm(instance=product)
+        context = {'user':request.user,'form':form,'product':product}
+        return render(request,'smartapp/adminproductsedit.html',context)

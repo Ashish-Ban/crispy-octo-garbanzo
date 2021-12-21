@@ -8,29 +8,34 @@
     {% load static %}
     <title>Smart</title>
     <link href="{% static 'css/bootstrap/bootstrap.css'%}" rel="stylesheet">
-    <style>
-        @font-face {
-            font-family: 'Roboto';
-            src: url('Roboto-ThinItalic-webfont.eot');
-            src: url('Roboto-ThinItalic-webfont.eot?#iefix') format('embedded-opentype'),
-                url('Roboto-ThinItalic-webfont.woff') format('woff'),
-                url('Roboto-ThinItalic-webfont.ttf') format('truetype'),
-                url('Roboto-ThinItalic-webfont.svg#RobotoThinItalic') format('svg');
-            font-weight: 200;
-            font-style: italic;
-        }
-        *{
-            font-family: "Roboto" !important;
-        }
-    </style>
+    <link href="{% static 'css/bootstrap-icons.css' %}" rel="stylesheet">
     <link href="{% static 'css/style.css'%}" rel="stylesheet">
     <script src="{% static 'js/bootstrap/bootstrap.bundle.min.js' %}"></script>
 </head>
 
 <body>
-    <div class="container-fluid bg-light h-100">
-        <h3 class="h3 fw-bold">Smart app</h3>
-        <a href="{% url 'login' %}">Login</a>
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top bg-white shadow-sm text-white">
+        <div class="container-fluid px-5">
+            <a class="navbar-brand h3" style="font-size: 1.75rem !important;" href="{% url 'index' %}">SMART</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link mx-3" href="{% url 'login' %}"><i class="bi bi-arrow-right-square text-secondary ml-5 mr-2"></i> Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid bg-white">
+        <h3 class="h3">Welcome to smart store 😊 </h3>
+    </div>
+    <div class="bg-dark d-flex flex-row justify-content-center align-items-center w-100 p-3 fixed-bottom">
+        <small class="text-white">© 2021, designed by SMART Store</small>
     </div>
 </body>
 

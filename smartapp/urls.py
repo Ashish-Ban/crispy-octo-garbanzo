@@ -4,8 +4,13 @@ from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
-    path('',views.index),
+    path('',views.index,name="index"),
     path('admindash/',views.admin_dash,name="dashboard"),
+    path('admindash/products/',views.admin_products,name="dashboard_products"),
+    path('admindash/products/<int:id>/',views.admin_products_edit,name="dashboard_products_edit"),
+    path('admindash/products/create/',views.admin_products_add,name="admin_products_add"),
+    path('admindash/stocks/',views.admin_stocks,name="dashboard_stocks"),
+    path('admindash/stocks/<int:id>/',views.admin_edit_stocks,name="dashboard_edit_stocks"),
     path('admindash/users/',views.admin_list_users,name="dashboard_list_users"),
     path('admindash/users/<int:id>/',views.admin_edit_users,name="dashboard_edit_users"),
     path('admindash/users/createstaff/',views.admin_add_staff_users,name="dashboard_add_staff_users"),
