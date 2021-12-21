@@ -6,6 +6,10 @@ from . import views
 urlpatterns = [
     path('',views.index,name="index"),
     path('admindash/',views.admin_dash,name="dashboard"),
+    path('admindash/bills/',views.admin_billing,name="dashboard_billing"),
+    path('admindash/bills/<uuid:billno>/',views.admin_bill_details,name="dashboard_bill_details"),
+    path('admindash/bills/<uuid:billno>/<int:billitemid>/',views.admin_billitem_details,name="dashboard_billitem_details"),
+    path('admindash/bills/create/',views.admin_bill_add,name="dashboard_bill_add"),
     path('admindash/products/',views.admin_products,name="dashboard_products"),
     path('admindash/products/<int:id>/',views.admin_products_edit,name="dashboard_products_edit"),
     path('admindash/products/create/',views.admin_products_add,name="admin_products_add"),
@@ -28,6 +32,9 @@ urlpatterns = [
     path('staff/stocks/',views.staff_stocks,name="staff_stocks"),
     path('staff/stocks/<int:id>/',views.staff_edit_stocks,name="staff_edit_stocks"),
     path('products/<int:id>/',views.product_details,name="product_details"),
-    # path('auth/',include('django.contrib.auth.urls')),
-    # path("auth/login/",auth_views.LoginView.as_view(template_name="smartapp/login.html")),
 ]
+
+handler_400 = 'smartapp.views.error_400'
+handler_403 = 'smartapp.views.error_403'
+handler_404 = 'smartapp.views.error_404'
+handler_500 = 'smartapp.views.error_500'

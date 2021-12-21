@@ -17,7 +17,7 @@
 <body class="bg-light">
     <nav class="navbar navbar-expand-lg navbar-light sticky-top bg-white shadow-sm text-white">
         <div class="container-fluid px-5">
-            <a class="navbar-brand h3" style="font-size: 1.75rem !important;"  href="{% url 'dashboard' %}">SMART</a>
+            <a class="navbar-brand h3" style="font-size: 1.75rem !important;" href="{% url 'dashboard' %}">SMART</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
@@ -62,52 +62,54 @@
     <div class="container h-100">
         <div class="d-flex flex-column shadow-sm bg-white m-5 p-5">
             <div class="d-flex flex-row justify-content-between my-3 fw-bold">
-                <h4 class="h5">Products</h4>
-                <a class="text-decoration-none btn btn-primary" href="{% url 'admin_products_add' %}">Add New</a>
+                <h4 class="h5">Bills</h4>
+                <a class="text-decoration-none btn btn-primary" href="{% url 'dashboard_bill_add' %}">Add New</a>
             </div>
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Code</th>
-                        <th scope="col">Name</th>
+                        <th scope="col">Bill No</th>
+                        <th scope="col">Created At</th>
                         <th scope="col">Last Updated</th>
-                        <th scope="col">Supplier Email</th>
-                        <th scope="col">Price</th>
-                        <th scope="col"></th>
+                        <th scope="col">Cashier Username</th>
+                        <th scope="col">Cashier ID</th>
+                        <th scope="col">Total</th>
                         <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% if products %}
-                    {% for product in products %}
+                    {% if bills %}
+                    {% for bill in bills %}
                     <tr>
-                        <td  class="fw-normal">
-                            {{ product.id }}
-                        </td>
-                        <td  class="fw-normal">
-                            {{ product.code }}
-                        </td>
                         <th scope="row" class="fw-normal">
-                            {{ product.name }}
+                            <a class="text-decoration-none text-dark"
+                                href="{% url 'dashboard_billing' %}{{bill.billno}}/">
+                                {{ bill.billno}}
+                            </a>
                         </th>
-                        <td  class="fw-normal">
-                            {{ product.updated_at }}
+                        <td class="fw-normal">
+                            {{ bill.created_at }}
                         </td>
-                        <td  class="fw-normal">
-                            {{ product.email }}
+                        <td class="fw-normal">
+                            {{ bill.updated_at }}
                         </td>
-                        <td  class="fw-normal">
-                            ₹ {{ product.price }}
+                        <td class="fw-normal">
+                            {{ bill.cashier }}
+                        </td>
+                        <td class="fw-normal">
+                            {{ bill.cashier.id }}
+                        </td>
+                        <td class="fw-normal">
+                            ₹ {{ bill.total}}
                         </td>
                         <td>
                             <a class="text-decoration-none text-dark"
-                                href="{% url 'dashboard_products' %}{{product.id}}/">
+                                href="{% url 'dashboard_billing' %}{{bill.billno}}/">
                                 <i class="bi bi-pencil"></i>
                             </a>
                         </td>
-                        <td>
-                            <i onclick="confirmDelete('{{product.id}}')" class="bi bi-trash"></i>
+                        <td class="fw-normal">
+                            <i onclick="confirmDelete('{{bill.id}}')" class="bi bi-trash"></i>
                         </td>
                     </tr>
                     {% endfor %}
@@ -116,13 +118,13 @@
             </table>
         </div>
     </div>
-    
-    
+
+
     <div class="bg-dark d-flex flex-row justify-content-center align-items-center w-100 p-3 fixed-bottom">
         <small class="text-white">© 2021, designed by SMART Store</small>
     </div>
 
-    
+
     <script>
         function getCookie(name) {
             let cookieValue = null;
@@ -141,8 +143,8 @@
         }
 
         function confirmDelete(id) {
-            if (window.confirm("Are you sure you want to delete this product ?")) {
-                axios.delete(`/admindash/products/?product=${id}`, {
+            if (window.confirm("Are you sure you want to delete this bill ?")) {
+                axios.delete(`{% url 'dashboard_billing' %}?bill=${id}`, {
                     headers: {
                         "X-CSRFToken": getCookie("csrftoken"),
                         "Content-Type": "application/json"
@@ -151,10 +153,10 @@
                     mode: "same-origin"
 
                 }).then((response) => {
-                    alert("Product Deleted Successfully");
+                    alert("Bill Deleted Successfully");
                     window.location.reload();
                 }).catch(error => {
-                    alert("Failed to delete product")
+                    alert("Failed to delete Bill")
                 })
             }
         }

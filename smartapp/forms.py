@@ -1,7 +1,7 @@
 from django import forms
 from django.db.models import fields
 from django.forms import widgets
-from .models import Product, Stock
+from .models import Bill, Product, Stock, BillItem
 
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=255,widget=forms.TextInput(attrs={'class':'form-control mb-3'}))
@@ -23,6 +23,7 @@ class StockForm(forms.ModelForm):
     class Meta:
         model = Stock
         fields = "__all__"
+        exclude = ('created_at','updated_at',)
 
 class ProductForm(forms.ModelForm):
     def __init__(self, *args,**kwargs):
@@ -34,3 +35,17 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = "__all__"
+        exclude = ('created_at','updated_at',)
+
+
+class BillItemForm(forms.ModelForm):
+    def __init__(self, *args,**kwargs):
+        super(BillItemForm,self).__init__(*args,**kwargs)
+    
+    def clean(self):
+        return super().clean()
+    
+    class Meta:
+        model = BillItem
+        fields = "__all__"
+        exclude = ('created_at','updated_at',)

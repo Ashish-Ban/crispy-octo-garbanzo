@@ -6,7 +6,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 from django.core.mail import send_mail
-from .forms import LoginForm, StockForm, ProductForm
+from .forms import BillItemForm, LoginForm, StockForm, ProductForm
 from .models import Bill,BillItem, Product, Stock
 import json
 
@@ -29,7 +29,6 @@ def login(request):
                     return render(request,'smartapp/login.html',{'form':form,'msg':"This account is not active."})
                 if user.is_superuser:
                     return redirect(to="../admindash",request=request)
-                    # return redirect(to='../admin/',request=request)
                 if user.is_staff:
                     return redirect(to='../staff/',request=request)
             else:
@@ -45,6 +44,9 @@ def logout(request):
     auth.logout(request)
     return redirect('/')
 
+##############################################################
+#######################   STAFF    ###########################
+##############################################################
 
 @login_required
 def staff_home(request):
@@ -54,7 +56,6 @@ def staff_home(request):
 @login_required
 def staff_billing(request):
     bills = Bill.objects.all().order_by("-id")
-    # print(dir(bills[0]))
     return render(request,'smartapp/staffbill.html',{'bills':bills})
 
 
@@ -80,11 +81,8 @@ def staff_bill_add(request):
         context = {'products':products,'user':request.user}
         return render(request,'smartapp/staffbilladd.html',context)
     if request.method=="POST":
-        print("post request received")
-        # print(dir(request))
-        print(json.loads(request.body.decode('utf-8'))["products"])
+        # print(json.loads(request.body.decode('utf-8'))["products"])
         products = json.loads(request.body.decode('utf-8'))["products"]
-        # print(request.user)
         user = User.objects.get(username=request.user)
         with transaction.atomic():
             bill = Bill(total=0)
@@ -103,10 +101,9 @@ def staff_bill_add(request):
 
 
 @login_required
-@permission_required('smartapp.view_stock')
+@permission_required('smartapp.view_stock',raise_exception=True)
 def staff_stocks(request):
     stocks = Stock.objects.all().order_by("-id")
-    print(dir(stocks[0]))
     context = {'stocks':stocks,'user':request.user}
     return render(request,'smartapp/staffstock.html',context)
 
@@ -172,8 +169,12 @@ def staff_products_edit(request,id):
         context = {'user':request.user,'form':form,'product':product}
         return render(request,'smartapp/staffproductsedit.html',context)
 
+
+##############################################################
+######################   PRODUCT    ##########################
 ##############################################################
 
+@login_required
 def product_details(request,id):
     if request.method == "GET":
         if request.GET['dashboard'] == "1":
@@ -183,7 +184,7 @@ def product_details(request,id):
 
 
 ###############################################################
-######################   Admin    #############################
+######################   ADMIN    #############################
 ###############################################################
 
 
@@ -194,7 +195,6 @@ def admin_dash(request):
 
 @login_required
 def admin_list_users(request):
-    # print(dir(User.objects.all()[0]))
     staffs = User.objects.filter(is_staff=True, is_superuser=False).order_by("-id")
     admins = User.objects.filter(is_superuser=True).order_by("-id")
     # others = User.objects.filter(is_superuser=False,is_staff=False)
@@ -437,3 +437,100 @@ def admin_products_edit(request,id):
         form = ProductForm(instance=product)
         context = {'user':request.user,'form':form,'product':product}
         return render(request,'smartapp/adminproductsedit.html',context)
+
+
+@login_required
+def admin_billing(request):
+    bills = Bill.objects.all().order_by("-id")
+    if request.method == "DELETE":
+        print("Delete request Received")
+        print(request.GET)
+        bid = request.GET.get('bill',default=None)
+        if bid is not None:
+            bill = Bill.objects.get(pk=bid)
+            bill.delete()
+        return HttpResponse("")
+    return render(request,'smartapp/adminbill.html',{'bills':bills})
+
+
+@login_required
+def admin_bill_details(request,billno):
+    if request.method == "DELETE":
+        print("Delete request Received")
+        print(request.GET)
+        bid = request.GET.get('billitem',default=None)
+        if bid is not None:
+            billitem = BillItem.objects.get(pk=bid)
+            billitem.delete()
+        return HttpResponse("")
+    if request.method=="GET":
+        bill = Bill.objects.get(billno=billno)
+        bill_items = bill.billitem_set.all()
+    else:
+        bill_items=None
+    return render(request,'smartapp/adminbilldetails.html',{'bill_items':bill_items,'bill':bill})
+
+
+@login_required
+@permission_required('smartapp.add_bill')
+@permission_required('smartapp.change_bill')
+@permission_required('smartapp.add_billitem')
+@permission_required('smartapp.change_billitem')
+def admin_bill_add(request):
+    if request.method == "GET":
+        products = Product.objects.all()
+        context = {'products':products,'user':request.user}
+        return render(request,'smartapp/adminbilladd.html',context)
+    if request.method=="POST":
+        # print(json.loads(request.body.decode('utf-8'))["products"])
+        products = json.loads(request.body.decode('utf-8'))["products"]
+        user = User.objects.get(username=request.user)
+        with transaction.atomic():
+            bill = Bill(total=0)
+            bill.cashier = user
+            bill.save()
+            for p in products:
+                product = Product.objects.get(pk=p["product"])
+                billitem = BillItem()
+                billitem.bill = bill
+                billitem.product = product
+                billitem.quantity = int(p["quantity"])
+                billitem.total = int(p['quantity']) * product.price
+                billitem.save()
+        return HttpResponse("")
+
+
+@login_required
+def admin_billitem_details(request,billno,billitemid):
+    bill = Bill.objects.get(billno=billno)
+    bill_item = BillItem.objects.get(pk=billitemid)
+    form = BillItemForm(instance=bill_item)
+    context = {'bill_item':bill_item,'bill':bill,'user':request.user,'form':form}
+    if request.method=="POST":
+        form = BillItemForm(request.POST,instance=bill_item)
+        if form.is_valid():
+            form.save()
+            bill_item = BillItem.objects.get(pk=billitemid)
+            form = BillItemForm(instance=bill_item)
+            context['form'] = form
+            context['msg'] ="Item Updated successfully"
+        else:
+            context['err'] = "Enter Valid data and also check for any errors shown"
+    return render(request,'smartapp/adminbillitemedit.html',context)
+
+
+##########################################################################
+########################### ERROR PAGES ##################################
+##########################################################################
+
+def error_400(request,exception):
+    return render(request,'smartapp/400.html')
+
+def error_403(request,exception):
+    return render(request,'smartapp/403.html')
+
+def error_404(request,exception):
+    return render(request,'smartapp/404.html')
+
+def error_500(request,exception):
+    return render(request,'smartapp/500.html')

@@ -4,6 +4,7 @@ from django.db.models.signals import m2m_changed, post_save, pre_delete
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.dispatch import receiver
+from django.utils import timezone
 import uuid
 
 # Create your models here.
@@ -12,6 +13,8 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=8,decimal_places=2, help_text="Price of product",blank=False)
     code = models.CharField(max_length=30,help_text="Item code",blank=False)
     email = models.EmailField(default="admin@smart.com")
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
@@ -20,6 +23,8 @@ class Stock(models.Model):
     product = models.OneToOneField(Product,on_delete=models.CASCADE,help_text="Product for which the stock is to be entered")
     total_quantity = models.DecimalField(max_digits=8,decimal_places=2,help_text="Total Quantity or capacity for the product",blank=False)
     available_quantity = models.DecimalField(max_digits=8,decimal_places=2,help_text="Available Quantity for the selected product",blank=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return '%d' % self.available_quantity
@@ -29,6 +34,8 @@ class Bill(models.Model):
     billno = models.UUIDField(default=uuid.uuid4, editable=False)
     products  = models.ManyToManyField(Product, through="smartapp.BillItem")
     total = models.DecimalField(max_digits=8,decimal_places=2,help_text="Total Price of the order",blank=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return '%d' % self.billno
@@ -38,6 +45,8 @@ class BillItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.DecimalField(max_digits=8,decimal_places=2,help_text="Product Ordered Quantity",blank=False)
     total = models.DecimalField(max_digits=8,decimal_places=2,help_text="Total Price (Ordered Quantity * Product Price)",blank=False, editable=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
         self.total = self.product.price * self.quantity

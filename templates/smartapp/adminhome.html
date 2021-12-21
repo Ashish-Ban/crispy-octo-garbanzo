@@ -27,11 +27,11 @@
                     <li class="nav-item">
                         <a class="nav-link mx-3" aria-current="page" href="{% url 'dashboard_list_users' %}"><i class="bi bi-people-fill text-secondary ml-5 mr-2"></i> Users</a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link mx-3" aria-current="page" href="{% url 'dashboard' %}"><i class="bi bi-receipt text-secondary ml-5 mr-2"></i> Audits</a>
-                    </li>
+                    </li> -->
                     <li class="nav-item">
-                        <a class="nav-link active mx-3" aria-current="page" href="{% url 'dashboard' %}"><i class="bi bi-file-earmark-text-fill text-secondary ml-5 mr-2"></i> Bills</a>
+                        <a class="nav-link active mx-3" aria-current="page" href="{% url 'dashboard_billing' %}"><i class="bi bi-file-earmark-text-fill text-secondary ml-5 mr-2"></i> Bills</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active mx-3" href="{% url 'dashboard_stocks' %}"><i class="bi bi-stack text-secondary ml-5 mr-2"></i> Stocks</a>
@@ -44,8 +44,6 @@
                             <i class="bi bi-person-circle text-secondary ml-5 mr-2"></i> {{ user }}
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                          <!-- <li><a class="dropdown-item" href="#">Action</a></li>
-                          <li><hr class="dropdown-divider"></li> -->
                           <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="bi bi-arrow-right-square text-secondary mx-3"></i> Logout</a></li>
                         </ul>
                     </li>
