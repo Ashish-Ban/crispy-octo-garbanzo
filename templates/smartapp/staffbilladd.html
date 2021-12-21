@@ -53,8 +53,8 @@
     <div class="container h-100">
         <div class="d-flex flex-column m-5 p-5 rounded bg-white shadow">
             <div class="d-flex flex-row justify-content-between my-3 fw-bold">
-                <h4 class="h4 fw-bold">Bill {{ user }}</h4>
-                <a href="{% url 'staff_billing' %}">Go Back</a>
+                <h4 class="h4 fw-normal">Bill {{ user }}</h4>
+                <a class="btn btn-primary text-decoration-none" href="{% url 'staff_billing' %}">Go Back</a>
             </div>
             <form action="" method="POST">
                 {% csrf_token %}
@@ -93,7 +93,7 @@
                 </div>
 
                 <div class="d-flex flex-row justify-content-start mt-5 fw-bold">
-                    <h4 class="h4 fw-bold">Added Items</h4>
+                    <h4 class="h4 fw-normal" id="addeditemsheading" style="display: none;">Added Items</h4>
                 </div>
                 <table class="table" id="billtable" style="display: none;">
                     <thead>
@@ -148,12 +148,12 @@
 
                 <div class="d-flex flex-row justify-content-end mb-5 pr-5">
                     <!-- <button type="button" class="btn btn-primary" id="#addButton" onclick="getGrandTotal()">Grand Total</button> -->
-                    <p class="fw-bold">Grand Total: ₹ </p>
+                    <p class="fw-bold" id="grandtotalheading" style="display: none;" >Grand Total: ₹ </p>
                     <p class="fw-bold" id="showGrandTotal"></p>
                 </div>
 
                 <div class="d-flex flex-row justify-content-end mb-5 pr-5">
-                    <button type="button" class="btn btn-primary" id="#saveBill" onclick="saveBill()">Save</button>
+                    <button type="button" class="btn btn-primary" id="saveBill" style="display: none;" onclick="saveBill()">Save</button>
                 </div>
 
                 <!-- <div class="d-flex flex-row">
@@ -263,6 +263,9 @@
             productElement.onchange = handleProduct;
             quantityElement.onchange = handleProduct;
             table.setAttribute('style', 'display:"table"')
+            document.getElementById('addeditemsheading').setAttribute('style','display:"block"')
+            document.getElementById('grandtotalheading').setAttribute('style','display:"block"')
+            document.getElementById('saveBill').setAttribute('style','display:"inline-block"')
             getGrandTotal();
         }
 

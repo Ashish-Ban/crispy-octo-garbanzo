@@ -50,8 +50,8 @@
     <div class="container h-100">
         <div class="d-flex flex-column shadow-sm bg-white m-5 p-5">
             <div class="d-flex flex-row justify-content-between my-3 fw-bold">
-                <h4 class="h4 fw-bold">Bill History</h4>
-                <a href="{% url 'staff_bill_add' %}">Add New</a>
+                <h4 class="h4 fw-normal">Bill History</h4>
+                <a class="btn btn-primary text-decoration-none" href="{% url 'staff_bill_add' %}">Add New</a>
             </div>
             <table class="table table-striped table-hover">
                 <thead>
@@ -64,12 +64,12 @@
                     {% if bills %}
                     {% for bill in bills %}
                     <tr>
-                        <th scope="row">
+                        <th scope="row" class="fw-normal">
                             <a class="text-decoration-none text-dark"  href="{% url 'staff_billing' %}{{bill.billno}}/">
                                 {{ bill.billno}}
                             </a>
                         </th>
-                        <td>
+                        <td class="fw-normal">
                             ₹ {{ bill.total}}
                         </td>
                     </tr>
